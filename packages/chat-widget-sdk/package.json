@@ -19,5 +19,6 @@
   ],
   "nx": {
     "name": "chat-widget-sdk"
-  }
+  },
+  "dependencies": {}
 }

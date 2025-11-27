@@ -8,8 +8,10 @@ import reactToWebComponent from '@r2wc/react-to-web-component';
 
 import { Box, Flex, IconButton, Section, Theme } from '@radix-ui/themes';
 import { ChatBubbleIcon, ChevronDownIcon } from '@radix-ui/react-icons';
+import { motion } from 'motion/react';
 
 import { useStyles } from './hooks/useStyles';
+import { Iframe } from './Iframe';
 
 import { ChatConfig } from '@eloquentai/types';
 
@@ -41,17 +43,19 @@ export function WidgetComponent({ container, ...config }: InternalWidgetProps) {
       }}
     >
       <Flex direction="column" justify="end" align="end" gap="20px">
-        {isChatWindowOpen && (
-          <Box className="w-[400px] h-[600px] rounded-xl bg-gray-50">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
+        <motion.div
+          initial="closed"
+          animate={isChatWindowOpen ? 'open' : 'closed'}
+          variants={{
+            open: { opacity: 1, y: 0, scale: 1, pointerEvents: 'auto' },
+            closed: { opacity: 0, y: 20, scale: 0.95, pointerEvents: 'none' },
+          }}
+          transition={{ duration: 0.1 }}
+        >
+          <Box className="w-[400px] h-[600px] rounded-xl bg-gray-50 overflow-hidden shadow-sm">
+            <Iframe src="http://localhost:4200" />
           </Box>
-        )}
+        </motion.div>
 
         <IconButton
           className="cursor-pointer"
