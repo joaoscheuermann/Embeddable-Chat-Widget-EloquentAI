@@ -2,5 +2,24 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
-  "references": []
+  "references": [
+    {
+      "path": "./packages/types"
+    },
+    {
+      "path": "./services/backend-e2e"
+    },
+    {
+      "path": "./services/backend"
+    },
+    {
+      "path": "./packages/chat-widget-sdk"
+    },
+    {
+      "path": "./apps/widget"
+    },
+    {
+      "path": "./apps/demo"
+    }
+  ]
 }
