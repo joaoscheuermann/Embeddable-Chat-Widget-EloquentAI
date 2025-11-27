@@ -1,7 +1,7 @@
-import { ChatWidget, ChatConfig } from '@eloquentai/chat-widget-sdk';
+
 
 export function App() {
-  const config: ChatConfig = {
+  const config: any = {
     title: 'Eloquent Support',
     primaryColor: '#6366f1', // Indigo-500
     secondaryColor: '#4f46e5', // Indigo-600
@@ -23,8 +23,6 @@ export function App() {
           </pre>
         </div>
       </div>
-
-      <ChatWidget config={config} widgetUrl="http://localhost:4200" />
     </div>
   );
 }

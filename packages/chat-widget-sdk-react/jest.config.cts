@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'chat-widget-sdk',
+  displayName: 'chat-widget-sdk-react',
   preset: '../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',

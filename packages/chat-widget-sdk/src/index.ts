@@ -1,2 +1,1 @@
-export * from './lib/ChatWidget';
-export type { ChatConfig } from '@eloquentai/types';
+export * from './lib/Widget';

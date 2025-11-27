@@ -2,9 +2,6 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
-    "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo",
-    "jsx": "react-jsx",
-    "lib": ["dom"],
     "types": [
       "node",
       "@nx/react/typings/cssmodule.d.ts",
@@ -12,20 +9,26 @@
       "vite/client"
     ],
     "rootDir": "src",
+    "jsx": "react-jsx",
     "module": "esnext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo"
   },
   "exclude": [
     "out-tsc",
     "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx",
+    "**/*.spec.js",
+    "**/*.test.js",
+    "**/*.spec.jsx",
+    "**/*.test.jsx",
+    "jest.config.ts",
+    "jest.config.cts",
     "src/**/*.spec.ts",
     "src/**/*.test.ts",
-    "src/**/*.spec.tsx",
-    "src/**/*.test.tsx",
-    "src/**/*.spec.js",
-    "src/**/*.test.js",
-    "src/**/*.spec.jsx",
-    "src/**/*.test.jsx",
     "eslint.config.js",
     "eslint.config.cjs",
     "eslint.config.mjs"
@@ -33,7 +36,7 @@
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
   "references": [
     {
-      "path": "../../packages/chat-widget-sdk-react/tsconfig.lib.json"
+      "path": "../chat-widget-sdk/tsconfig.lib.json"
     }
   ]
 }

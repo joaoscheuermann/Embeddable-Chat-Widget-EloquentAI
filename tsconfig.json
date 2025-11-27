@@ -7,9 +7,6 @@
       "path": "./packages/types"
     },
     {
-      "path": "./services/backend-e2e"
-    },
-    {
       "path": "./services/backend"
     },
     {
@@ -20,6 +17,9 @@
     },
     {
       "path": "./apps/demo"
+    },
+    {
+      "path": "./packages/chat-widget-sdk-react"
     }
   ]
 }
