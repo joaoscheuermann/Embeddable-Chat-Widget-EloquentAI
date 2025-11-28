@@ -3,11 +3,11 @@ import { useEffect } from 'react';
 
 import {
   EloquentAIChatWidget,
-  defineWidgetEloquentAIChatWidgetComponent,
+  defineEloquentAIChatWidgetComponent,
   WidgetProps,
 } from '@eloquentai/chat-widget-sdk';
 
-defineWidgetEloquentAIChatWidgetComponent();
+defineEloquentAIChatWidgetComponent();
 
 export type ChatWidgetProps = WidgetProps;
 

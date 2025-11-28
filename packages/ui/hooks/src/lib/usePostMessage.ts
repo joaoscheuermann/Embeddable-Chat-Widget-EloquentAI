@@ -4,8 +4,7 @@ import { WidgetMessage } from '@eloquentai/types';
 export const usePostMessage = (handler?: (event: WidgetMessage) => void) => {
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
-            // For now, we accept messages from any origin, but in production this should be restricted
-            // if (event.origin !== targetOrigin) return;
+            console.log(`Message received from: ${event.origin}`, event.data);
 
             const data = event.data as WidgetMessage;
             if (data && data.type && handler) {
@@ -14,6 +13,7 @@ export const usePostMessage = (handler?: (event: WidgetMessage) => void) => {
         };
 
         window.addEventListener('message', handleMessage);
+
         return () => {
             window.removeEventListener('message', handleMessage);
         };
@@ -21,6 +21,9 @@ export const usePostMessage = (handler?: (event: WidgetMessage) => void) => {
 
     const sendMessage = useCallback((message: WidgetMessage, targetWindow: Window | null = null, targetOrigin: string = '*') => {
         const target = targetWindow || (window.parent !== window ? window.parent : null);
+
+        console.log(`Message sent to: ${targetOrigin}`, message);
+
         if (target) {
             target.postMessage(message, targetOrigin);
         } else {

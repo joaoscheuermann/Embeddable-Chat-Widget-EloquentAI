@@ -2,7 +2,6 @@ import { forwardRef, IframeHTMLAttributes } from 'react';
 
 export interface IframeProps extends IframeHTMLAttributes<HTMLIFrameElement> {
   title?: string;
-  onLoad: () => void;
 }
 
 export const Iframe = forwardRef<HTMLIFrameElement, IframeProps>(
@@ -18,7 +17,6 @@ export const Iframe = forwardRef<HTMLIFrameElement, IframeProps>(
           ...style,
         }}
         {...props}
-        onLoad={props.onLoad}
       />
     );
   }

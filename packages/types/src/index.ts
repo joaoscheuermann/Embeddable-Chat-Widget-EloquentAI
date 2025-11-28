@@ -22,7 +22,7 @@ export interface ChatResponse {
   message: ChatMessage;
 }
 
-export type WidgetMessageType = 'close_window' | 'init';
+export type WidgetMessageType = 'iframe:close_window' | 'iframe:initialized' | 'iframe:config';
 
 export interface WidgetMessage {
   type: WidgetMessageType;

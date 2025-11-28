@@ -1,46 +1,39 @@
-import { useEffect, useState } from 'react';
-import { Header } from './components/Header';
-import { MessageList } from './components/MessageList';
-import { MessageInput } from './components/MessageInput';
-import { useChat } from './hooks/useChat';
+import { useCallback, useEffect, useState } from 'react';
 
-import { ChatConfig } from '@eloquentai/types';
+import { Flex, Theme } from '@radix-ui/themes';
+import { usePostMessage } from '@ui/hooks';
+import { ChatConfig, WidgetMessage } from '@eloquentai/types';
 
 function App() {
-  const { messages, sendMessage } = useChat();
-  const [config, setConfig] = useState<ChatConfig>({
-    id: 'support',
-    title: 'Support',
-    accentColor: 'crimson',
-    secondaryColor: 'auto',
-    logoUrl: '',
-  });
+  const [config, setConfig] = useState<ChatConfig | null>(null);
 
-  useEffect(() => {
-    // Listen for config from parent
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data.type === 'INIT_CONFIG') {
-        setConfig(event.data.payload);
-      }
-    };
-    window.addEventListener('message', handleMessage);
+  const handleMessage = useCallback((event: WidgetMessage) => {
+    switch (event.type) {
+      case 'iframe:config':
+        setConfig(event.payload);
+        break;
 
-    // Notify parent that widget is ready
-    window.parent.postMessage({ type: 'WIDGET_READY' }, '*');
-
-    return () => window.removeEventListener('message', handleMessage);
+      default:
+        break;
+    }
   }, []);
 
-  const handleClose = () => {
-    window.parent.postMessage({ type: 'CLOSE_WIDGET' }, '*');
-  };
+  const { sendMessage } = usePostMessage(handleMessage);
+
+  useEffect(() => {
+    sendMessage(
+      { type: 'iframe:initialized', payload: null },
+      window.parent,
+      '*'
+    );
+  }, []);
+
+  if (!config) return null;
 
   return (
-    <div className="flex flex-col h-full w-full bg-white shadow-xl rounded-lg overflow-hidden border border-gray-200">
-      <Header config={config} onClose={handleClose} />
-      <MessageList messages={messages} primaryColor={config.accentColor} />
-      <MessageInput onSend={sendMessage} primaryColor={config.accentColor} />
-    </div>
+    <Theme>
+      <Flex>Foo</Flex>
+    </Theme>
   );
 }
 

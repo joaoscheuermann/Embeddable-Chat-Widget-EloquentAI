@@ -40,7 +40,15 @@ export function WidgetComponent({ container, ...config }: InternalWidgetProps) {
 
   const handleMessage = useCallback((event: WidgetMessage) => {
     switch (event.type) {
-      case 'close_window':
+      case 'iframe:initialized':
+        sendMessage(
+          { type: 'iframe:config', payload: config },
+          iframeRef.current?.contentWindow,
+          '*'
+        );
+        break;
+
+      case 'iframe:close_window':
         setIsChatWindowOpen(false);
         break;
 
@@ -51,14 +59,6 @@ export function WidgetComponent({ container, ...config }: InternalWidgetProps) {
 
   // Enable comunication between the iframe and the parent window
   const { sendMessage } = usePostMessage(handleMessage);
-
-  // Setup the iframe when loaded
-  const handleIframeOnLoad = () => {
-    sendMessage(
-      { type: 'init', payload: config },
-      iframeRef.current?.contentWindow
-    );
-  };
 
   return (
     <Theme
@@ -85,11 +85,7 @@ export function WidgetComponent({ container, ...config }: InternalWidgetProps) {
           transition={{ duration: 0.1 }}
         >
           <Box className="w-[400px] h-[600px] rounded-xl bg-gray-50 overflow-hidden shadow-sm">
-            <Iframe
-              ref={iframeRef}
-              src={widgetUrl}
-              onLoad={handleIframeOnLoad}
-            />
+            <Iframe ref={iframeRef} src={widgetUrl} />
           </Box>
         </motion.div>
 
@@ -140,7 +136,7 @@ export const EloquentAIChatWidget = reactToWebComponent(WidgetComponent, {
 /**
  * Defines the custom element for the Eloquent AI Chat Widget if it hasn't been defined already.
  */
-export const defineWidgetEloquentAIChatWidgetComponent = () => {
+export const defineEloquentAIChatWidgetComponent = () => {
   if (customElements.get(WIDGET_TAG_NAME)) return;
 
   customElements.define(WIDGET_TAG_NAME, EloquentAIChatWidget);
@@ -153,7 +149,7 @@ export const defineWidgetEloquentAIChatWidgetComponent = () => {
  * @returns The mounted web component instance
  */
 export const setupChatWidget = (props: WidgetProps) => {
-  defineWidgetEloquentAIChatWidgetComponent();
+  defineEloquentAIChatWidgetComponent();
 
   const widget = new EloquentAIChatWidget();
 
