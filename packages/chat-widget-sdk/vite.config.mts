@@ -48,4 +48,10 @@ export default defineConfig(() => ({
     reportCompressedSize: true,
     commonjsOptions: { transformMixedEsModules: true },
   },
+
+  resolve: {
+    alias: {
+      '@ui/hooks': path.resolve(__dirname, '../ui/hooks/src/index.ts'),
+    },
+  },
 }));

@@ -1,1 +1,1 @@
-export * from './lib/Widget';
+export * from './Widget';

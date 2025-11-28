@@ -161,7 +161,8 @@ const documents = [
 
 app.get('/status', (req, res) => {
   const statuses: WidgetStatus[] = ['online', 'offline', 'maintenance'];
-  const status = statuses[Math.floor(Math.random() * statuses.length)];
+  const status = process.env.WIDGET_STATUS || statuses[Math.floor(Math.random() * statuses.length)];
+
   res.json({ status });
 });
 

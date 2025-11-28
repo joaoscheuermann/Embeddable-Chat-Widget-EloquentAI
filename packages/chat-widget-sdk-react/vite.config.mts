@@ -14,11 +14,6 @@ export default defineConfig(() => ({
       tsconfigPath: path.join(import.meta.dirname, 'tsconfig.lib.json'),
     }),
   ],
-  resolve: {
-    alias: {
-      '@eloquentai/chat-widget-sdk': path.resolve(__dirname, '../chat-widget-sdk/src/index.ts'),
-    },
-  },
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [],
@@ -44,6 +39,12 @@ export default defineConfig(() => ({
     rollupOptions: {
       // External packages that should not be bundled into your library.
       external: ['react', 'react-dom', 'react/jsx-runtime'],
+    },
+  },
+
+  resolve: {
+    alias: {
+      '@eloquentai/chat-widget-sdk': path.resolve(__dirname, '../chat-widget-sdk/src/index.ts'),
     },
   },
 }));
