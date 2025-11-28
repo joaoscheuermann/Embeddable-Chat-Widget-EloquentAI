@@ -1,20 +1,16 @@
-// import { useCurentServiceStatusQuery } from '@ui/queries';
+import type { IServiceStatus } from '@eloquentai/types';
 
 import { Box } from '@radix-ui/themes';
 import { useQuery } from '@tanstack/react-query';
 
 const URL = import.meta.env.VITE_API_ENDPOINT;
 
-export interface ServiceStatus {
-  status: string;
-}
-
 export const ServiceStatus = () => {
-  const { data } = useQuery<ServiceStatus>({
+  const { data } = useQuery<IServiceStatus>({
     queryKey: ['current-service-status'],
     queryFn: async () => {
       const response = await fetch(`${URL}/status`);
-      return (await response.json()) as ServiceStatus;
+      return (await response.json()) as IServiceStatus;
     },
   });
 
@@ -32,9 +28,9 @@ export const ServiceStatus = () => {
     }
   };
 
-  const className = `w-4 h-4 rounded-full border-2 border-white ${getStatusColor(
-    data.status
-  )}`;
+  const color = getStatusColor(data.status);
+
+  const className = `w-4 h-4 rounded-full border-2 border-white ${color}`;
 
   return <Box className={className} />;
 };

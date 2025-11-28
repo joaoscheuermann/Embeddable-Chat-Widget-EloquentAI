@@ -1,12 +1,12 @@
 import { useEffect, useCallback } from 'react';
-import { WidgetMessage } from '@eloquentai/types';
+import { IWidgetMessage } from '@eloquentai/types';
 
-export const usePostMessage = (handler?: (event: WidgetMessage) => void) => {
+export const usePostMessage = (handler?: (event: IWidgetMessage) => void) => {
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
             console.log(`Message received from: ${event.origin}`, event.data);
 
-            const data = event.data as WidgetMessage;
+            const data = event.data as IWidgetMessage;
             if (data && data.type && handler) {
                 handler(data);
             }
@@ -19,7 +19,7 @@ export const usePostMessage = (handler?: (event: WidgetMessage) => void) => {
         };
     }, [handler]);
 
-    const sendMessage = useCallback((message: WidgetMessage, targetWindow: Window | null = null, targetOrigin: string = '*') => {
+    const sendMessage = useCallback((message: IWidgetMessage, targetWindow: Window | null = null, targetOrigin: string = '*') => {
         const target = targetWindow || (window.parent !== window ? window.parent : null);
 
         console.log(`Message sent to: ${targetOrigin}`, message);

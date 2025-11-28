@@ -7,7 +7,7 @@ import radixStyles from '@radix-ui/themes/styles.css?inline';
 import reactToWebComponent from '@r2wc/react-to-web-component';
 
 import { usePostMessage } from '@ui/hooks';
-import { ChatConfig, WidgetMessage } from '@eloquentai/types';
+import { IChatConfig, IWidgetMessage } from '@eloquentai/types';
 
 import { AnimatePresence, motion } from 'motion/react';
 import { Box, Flex, IconButton, Theme } from '@radix-ui/themes';
@@ -20,7 +20,7 @@ import { ServiceStatus } from './components/ServiceStatus';
 
 const WIDGET_TAG_NAME = 'chat-widget';
 
-interface InternalWidgetProps extends ChatConfig {
+interface InternalWidgetProps extends IChatConfig {
   container: DocumentFragment;
 }
 
@@ -40,7 +40,7 @@ export function WidgetComponent({ container, ...config }: InternalWidgetProps) {
 
   const [isChatWindowOpen, setIsChatWindowOpen] = useState(false);
 
-  const handleMessage = useCallback((event: WidgetMessage) => {
+  const handleMessage = useCallback((event: IWidgetMessage) => {
     switch (event.type) {
       case 'iframe:initialized':
         sendMessage(

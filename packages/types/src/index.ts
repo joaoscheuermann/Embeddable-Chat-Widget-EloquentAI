@@ -1,14 +1,7 @@
 import { ComponentProps } from 'react';
 import { Theme } from '@radix-ui/themes';
 
-export interface ChatMessage {
-  id: string;
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-  timestamp: number;
-}
-
-export interface ChatConfig {
+export interface IChatConfig {
   id: string;
   title?: string;
   accentColor?: ComponentProps<typeof Theme>['accentColor'];
@@ -16,15 +9,15 @@ export interface ChatConfig {
   logoUrl?: string;
 }
 
-export type WidgetStatus = 'online' | 'offline' | 'maintenance';
+export type TWidgetStatus = 'online' | 'offline' | 'maintenance';
 
-export interface ChatResponse {
-  message: ChatMessage;
+export interface IServiceStatus {
+  status: TWidgetStatus;
 }
 
-export type WidgetMessageType = 'iframe:close_window' | 'iframe:initialized' | 'iframe:config';
+export type TWidgetMessageType = 'iframe:close_window' | 'iframe:initialized' | 'iframe:config';
 
-export interface WidgetMessage {
-  type: WidgetMessageType;
+export interface IWidgetMessage {
+  type: TWidgetMessageType;
   payload?: any;
 }

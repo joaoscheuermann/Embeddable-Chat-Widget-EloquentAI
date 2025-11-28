@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { WidgetStatus } from '@eloquentai/types';
+import { TWidgetStatus } from '@eloquentai/types';
 
 import { ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings } from '@langchain/google-genai';
 import { Document } from '@langchain/core/documents';
@@ -160,7 +160,7 @@ const documents = [
 })();
 
 app.get('/status', (req, res) => {
-  const statuses: WidgetStatus[] = ['online', 'offline', 'maintenance'];
+  const statuses: TWidgetStatus[] = ['online', 'offline', 'maintenance'];
   const status = process.env.WIDGET_STATUS || statuses[Math.floor(Math.random() * statuses.length)];
 
   res.json({ status });
