@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
-    "types": ["node", "express"],
+    "types": ["node"],
     "rootDir": "src",
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
   },
@@ -17,10 +17,5 @@
     "eslint.config.js",
     "eslint.config.cjs",
     "eslint.config.mjs"
-  ],
-  "references": [
-    {
-      "path": "../../packages/types/tsconfig.lib.json"
-    }
   ]
 }
