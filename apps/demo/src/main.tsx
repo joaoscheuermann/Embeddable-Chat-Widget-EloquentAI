@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <StrictMode>
-    <ChatWidget id="1" accentColor="crimson" />
+    <ChatWidget id="1" title="Eloquent AI Widget" accentColor="crimson" />
     <BrowserRouter>
       <App />
     </BrowserRouter>

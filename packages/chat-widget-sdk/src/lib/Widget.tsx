@@ -84,14 +84,14 @@ export function WidgetComponent({ container, ...config }: InternalWidgetProps) {
           }}
           transition={{ duration: 0.1 }}
         >
-          <Box className="w-[400px] h-[600px] rounded-xl bg-gray-50 overflow-hidden shadow-sm">
+          <Box className="w-[400px] h-[600px] rounded-xl bg-gray-50 overflow-hidden shadow-md border border-gray-200">
             <Iframe ref={iframeRef} src={widgetUrl} />
           </Box>
         </motion.div>
 
         <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.1 }}>
           <IconButton
-            className="cursor-pointer"
+            className="cursor-pointer shadow-md"
             size="4"
             variant="solid"
             radius="full"
