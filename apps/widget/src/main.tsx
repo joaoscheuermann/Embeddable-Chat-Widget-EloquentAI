@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import * as ReactDOM from 'react-dom/client';
-import App from './app/app';
+import ChatRoute from './app/routes/Chat';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -10,7 +10,10 @@ const root = ReactDOM.createRoot(
 root.render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <Routes>
+        <Route path="/chat" element={<ChatRoute />} />
+        <Route path="*" element={<Navigate to="/chat" replace />} />
+      </Routes>
     </BrowserRouter>
   </StrictMode>
 );

@@ -5,10 +5,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { Flex, Theme } from '@radix-ui/themes';
 import { usePostMessage } from '@ui/hooks';
 import { ChatConfig, WidgetMessage } from '@eloquentai/types';
-import { Header } from './components/Header';
-import { MessageList } from './components/MessageList';
-import { InputArea } from './components/InputArea';
-import { Footer } from './components/Footer';
+import { Header } from '../components/Header';
+import { MessageList } from '../components/MessageList';
+import { InputArea } from '../components/InputArea';
+import { Footer } from '../components/Footer';
 
 function App() {
   const [config, setConfig] = useState<ChatConfig | null>(null);
