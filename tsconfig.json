@@ -7,9 +7,6 @@
       "path": "./packages/types"
     },
     {
-      "path": "./services/backend"
-    },
-    {
       "path": "./packages/chat-widget-sdk"
     },
     {
