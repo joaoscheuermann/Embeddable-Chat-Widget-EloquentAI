@@ -1,19 +1,20 @@
 /// <reference lib="dom" />
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import styles from './styles.css?inline';
 import radixStyles from '@radix-ui/themes/styles.css?inline';
 
 import reactToWebComponent from '@r2wc/react-to-web-component';
 
-import { Box, Flex, IconButton, Section, Theme } from '@radix-ui/themes';
+import { usePostMessage } from '@ui/hooks';
+import { ChatConfig, WidgetMessage } from '@eloquentai/types';
+
+import { AnimatePresence, motion } from 'motion/react';
+import { Box, Flex, IconButton, Theme } from '@radix-ui/themes';
 import { ChatBubbleIcon, ChevronDownIcon } from '@radix-ui/react-icons';
-import { motion } from 'motion/react';
 
-import { useStyles } from './hooks/useStyles';
 import { Iframe } from './Iframe';
-
-import { ChatConfig } from '@eloquentai/types';
+import { useStyles } from './hooks/useStyles';
 
 const WIDGET_TAG_NAME = 'chat-widget';
 
@@ -24,10 +25,40 @@ interface InternalWidgetProps extends ChatConfig {
 export type WidgetProps = Omit<InternalWidgetProps, 'container'>;
 
 export function WidgetComponent({ container, ...config }: InternalWidgetProps) {
+  const isDevMode = process.env.NODE_ENV === 'development';
+
+  const widgetUrl = isDevMode
+    ? `http://localhost:4200/${config.id}`
+    : `http://localhost:4200/${config.id}`;
+
   // Initialize the styles inside the shadow DOM;
   useStyles([styles, radixStyles], container);
 
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
   const [isChatWindowOpen, setIsChatWindowOpen] = useState(false);
+
+  const handleMessage = useCallback((event: WidgetMessage) => {
+    switch (event.type) {
+      case 'close_window':
+        setIsChatWindowOpen(false);
+        break;
+
+      default:
+        break;
+    }
+  }, []);
+
+  // Enable comunication between the iframe and the parent window
+  const { sendMessage } = usePostMessage(handleMessage);
+
+  // Setup the iframe when loaded
+  const handleIframeOnLoad = () => {
+    sendMessage(
+      { type: 'init', payload: config },
+      iframeRef.current?.contentWindow
+    );
+  };
 
   return (
     <Theme
@@ -41,6 +72,7 @@ export function WidgetComponent({ container, ...config }: InternalWidgetProps) {
         width: 'fit-content',
         minHeight: 0,
       }}
+      accentColor={config?.accentColor}
     >
       <Flex direction="column" justify="end" align="end" gap="20px">
         <motion.div
@@ -53,30 +85,56 @@ export function WidgetComponent({ container, ...config }: InternalWidgetProps) {
           transition={{ duration: 0.1 }}
         >
           <Box className="w-[400px] h-[600px] rounded-xl bg-gray-50 overflow-hidden shadow-sm">
-            <Iframe src="http://localhost:4200" />
+            <Iframe
+              ref={iframeRef}
+              src={widgetUrl}
+              onLoad={handleIframeOnLoad}
+            />
           </Box>
         </motion.div>
 
-        <IconButton
-          className="cursor-pointer"
-          size="4"
-          variant="solid"
-          radius="full"
-          onClick={() => setIsChatWindowOpen((state) => !state)}
-        >
-          {isChatWindowOpen ? (
-            <ChevronDownIcon color="white" />
-          ) : (
-            <ChatBubbleIcon color="white" />
-          )}
-        </IconButton>
+        <motion.div whileTap={{ scale: 0.95 }} whileHover={{ scale: 1.1 }}>
+          <IconButton
+            className="cursor-pointer"
+            size="4"
+            variant="solid"
+            radius="full"
+            onClick={() => setIsChatWindowOpen((state) => !state)}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={isChatWindowOpen ? 'close' : 'open'}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.1 }}
+              >
+                {isChatWindowOpen ? (
+                  <ChevronDownIcon color="white" />
+                ) : (
+                  <ChatBubbleIcon color="white" />
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </IconButton>
+        </motion.div>
       </Flex>
     </Theme>
   );
 }
 
+/**
+ * Converts the WidgetComponent to a web component.
+ */
 export const EloquentAIChatWidget = reactToWebComponent(WidgetComponent, {
   shadow: 'open',
+  props: {
+    id: 'string',
+    title: 'string',
+    accentColor: 'string',
+    secondaryColor: 'string',
+    logoUrl: 'string',
+  },
 });
 
 /**
@@ -97,7 +155,7 @@ export const defineWidgetEloquentAIChatWidgetComponent = () => {
 export const setupChatWidget = (props: WidgetProps) => {
   defineWidgetEloquentAIChatWidgetComponent();
 
-  const widget = new EloquentAIChatWidget(props);
+  const widget = new EloquentAIChatWidget();
 
   document.body.prepend(widget);
 

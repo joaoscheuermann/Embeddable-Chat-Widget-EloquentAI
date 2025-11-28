@@ -64,7 +64,8 @@
   "workspaces": [
     "packages/*",
     "services/*",
-    "apps/*"
+    "apps/*",
+    "packages/ui/*"
   ],
   "dependencies": {
     "@r2wc/react-to-web-component": "^2.1.0",

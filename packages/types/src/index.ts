@@ -1,3 +1,6 @@
+import { ComponentProps } from 'react';
+import { Theme } from '@radix-ui/themes';
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
@@ -6,9 +9,10 @@ export interface ChatMessage {
 }
 
 export interface ChatConfig {
+  id: string;
   title?: string;
-  primaryColor?: string;
-  secondaryColor?: string;
+  accentColor?: ComponentProps<typeof Theme>['accentColor'];
+  secondaryColor?: ComponentProps<typeof Theme>['grayColor'];
   logoUrl?: string;
 }
 
@@ -16,4 +20,11 @@ export type WidgetStatus = 'online' | 'offline' | 'maintenance';
 
 export interface ChatResponse {
   message: ChatMessage;
+}
+
+export type WidgetMessageType = 'close_window' | 'init';
+
+export interface WidgetMessage {
+  type: WidgetMessageType;
+  payload?: any;
 }

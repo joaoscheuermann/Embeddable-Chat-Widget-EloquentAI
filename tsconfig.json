@@ -20,6 +20,9 @@
     },
     {
       "path": "./packages/chat-widget-sdk-react"
+    },
+    {
+      "path": "./packages/ui/hooks"
     }
   ]
 }

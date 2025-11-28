@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <StrictMode>
-    <ChatWidget title="FooBar" />
+    <ChatWidget id="1" accentColor="crimson" />
     <BrowserRouter>
       <App />
     </BrowserRouter>
