@@ -164,6 +164,12 @@ export const setupChatWidget = (props: WidgetProps) => {
 
   const widget = new EloquentAIChatWidget();
 
+  widget.setAttribute('id', props.id || '');
+  widget.setAttribute('title', props.title || '');
+  widget.setAttribute('accentColor', props.accentColor || '');
+  widget.setAttribute('secondaryColor', props.secondaryColor || '');
+  widget.setAttribute('logoUrl', props.logoUrl || '');
+
   document.body.prepend(widget);
 
   return widget;
