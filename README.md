@@ -8,6 +8,13 @@ To enable more efficient, secure, and rapid iteration, the widget is loaded with
 
 ![alt text](./assets/image.png)
 
+### Screenshots
+
+<div style="display: flex; justify-content: space-around; align-items: flex-start;">
+  <img src="./assets/screenshot02.png" alt="Screenshot 2" style="max-width: 48%; height: auto;"/>
+  <img src="./assets/screenshot01.png" alt="Screenshot 1" style="max-width: 48%; height: auto;"/>
+</div>
+
 ### Challenges
 
 The primary challenge involved encapsulating the widget SDK within a web component without style leakage or unintended impact on the host page.
