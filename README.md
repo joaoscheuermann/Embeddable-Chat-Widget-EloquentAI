@@ -1,90 +1,138 @@
-# MonorepoStarter
+# Embeddable Chat Widget
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+## Architecture
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+The primary goal of this project was to develop a framework-agnostic implementation of the chat widget, using modern technologies and practices to develop it, that could be easily embedded into any web application.
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+To enable more efficient, secure, and rapid iteration, the widget is loaded within an iframe. This isolation provides enhanced control over the deployment process and allows for swift resolution of any issues, which ultimately informed the design of this architecture.
 
-## Finish your CI setup
+![alt text](./assets/image.png)
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/nbfndpkaAJ)
+### Components
 
+1.  **Chat Widget SDK (`packages/chat-widget-sdk`)**
 
-## Generate a library
+    - **Role**: The entry point for the host application.
+    - **Tech**: React, wrapped as a Web Component using `@r2wc/react-to-web-component`.
+    - **Function**: It injects a custom element (`<chat-widget>`) into the DOM, which renders an `<iframe>`. This ensures complete style isolation from the host page. It handles communication between the host and the widget via `postMessage`.
+    - **Note**: While the core SDK is implemented as a Web Component for framework agnosticism, it includes a React wrapper (`chat-widget-sdk-react`) for seamless integration. Similar wrappers can be easily created for other frameworks like Vue, Angular, or Svelte.
 
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
+2.  **Widget Application (`apps/widget`)**
+
+    - **Role**: The user interface of the chat widget.
+    - **Tech**: React, Vite, Radix UI, Tailwind CSS, Framer Motion.
+    - **Function**: Runs inside the iframe injected by the SDK. It provides the chat interface, handles user interactions, and communicates with the API.
+
+3.  **API Service (`services/api`)**
+    - **Role**: The backend service handling chat logic.
+    - **Tech**: Node.js, Express, LangChain, Google Gemini.
+    - **Function**: Processes chat messages, performs RAG (Retrieval-Augmented Generation) using an in-memory vector store, and streams responses back to the widget.
+
+### Strengths
+
+- **Framework Agnostic and Embeddability**: The SDK exposes a standard Web Component, allowing it to be used in any web application (React, Vue, Angular, vanilla HTML/JS).
+- **Monorepo Structure**: Built with Nx, allowing shared types and utilities between the SDK, Widget, and API.
+- **Isolation**: The widget operates within an iframe, ensuring complete separation from the host page. This isolation facilitates independent deployments and updates, allowing us to seamlessly roll out new versions or fixes without impacting third-party applications or requiring them to update their integration code.
+- **Style Isolation**: Using an iframe guarantees that the widget's styles (Tailwind/Radix) do not bleed into the host page, and vice-versa.
+
+### Weaknesses
+
+- **Iframe Overhead**: Loading a full React application inside an iframe incurs a slight performance cost compared to a direct DOM injection.
+- **Communication Complexity**: Interacting between the host page and the widget requires a `postMessage` bridge, which adds complexity to event handling.
+- **Project Structure**: While monorepos can introduce navigational complexity, the implemented architecture effectively facilitates extensive code sharing across the SDK, Widget, and API, thereby leveraging the structure's benefits.
+
+## Installation and Running
+
+Follow these steps to install and run the project components.
+
+### 1. Run the SDK Build + Watch
+
+To build the SDK and watch for changes:
+
+```bash
+npx nx build chat-widget-sdk --watch
 ```
 
-## Run tasks
+### 2. Run the Widget Server
 
-To build the library use:
+To start the widget development server:
 
-```sh
-npx nx build pkg1
+```bash
+npx nx serve widget
 ```
 
-To run any task with Nx use:
+### 3. Run the API Server
 
-```sh
-npx nx <target> <project-name>
+To start the API server:
+
+```bash
+npx nx serve @eloquentai/api
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+### 4. Run the Demo Application
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+To start the demo application:
 
-## Versioning and releasing
-
-To version and release the library use
-
-```
-npx nx release
+```bash
+npx nx serve demo
 ```
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
+## SDK Linking
 
-[Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Follow these steps to build the `chat-widget-sdk` and link it locally to another project.
 
-## Keep TypeScript project references up to date
+### 1. Build the SDK
 
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
+First, build the SDK:
 
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
-
-```sh
-npx nx sync
+```bash
+npx nx build chat-widget-sdk
 ```
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+### 2. Link the SDK
 
-```sh
-npx nx sync:check
+Navigate to the output directory and create a symlink:
+
+```bash
+cd dist/packages/chat-widget-sdk
+npm link
 ```
 
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
+In your other project (where you want to use the SDK), run:
 
+```bash
+npm link @eloquentai/chat-widget-sdk
+```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### 3. Run the Servers
 
-## Install Nx Console
+Ensure the backend services are running to support the SDK:
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+**Run the Widget Server:**
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```bash
+npx nx serve widget
+```
 
-## Useful links
+```bash
+npx nx serve @eloquentai/api
+```
 
-Learn more:
+## Usage
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+After linking the SDK, you can use it in your project as follows:
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+```javascript
+import { setupChatWidget } from '@eloquentai/chat-widget-sdk';
+
+/**
+ * Calling this method, will prepend a ChatWidget Web Component to the DOM.
+ */
+setupChatWidget({
+  id: 'your-widget-id',
+  title: 'Chat Widget',
+  accentColor: '#007bff',
+  secondaryColor: '#6c757d',
+  logoUrl: 'https://example.com/logo.png',
+});
+```
