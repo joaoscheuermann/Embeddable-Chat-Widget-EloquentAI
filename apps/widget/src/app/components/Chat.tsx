@@ -145,9 +145,11 @@ export const BotBubble = ({ children }: React.PropsWithChildren) => {
         transition={{ duration: 0.2 }}
         style={{ maxWidth: '80%' }}
       >
-        <Box
+        <Flex
           px="3"
           py="2"
+          direction="column"
+          gap="2"
           className="
             bg-[var(--gray-4)]
             text-[var(--gray-12)]
@@ -156,7 +158,7 @@ export const BotBubble = ({ children }: React.PropsWithChildren) => {
           "
         >
           {children}
-        </Box>
+        </Flex>
       </motion.div>
     </Flex>
   );

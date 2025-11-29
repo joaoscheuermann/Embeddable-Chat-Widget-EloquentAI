@@ -178,13 +178,16 @@ app.post('/chat/:session/message', async (req, res) => {
 
     // Create prompt template
     const prompt = ChatPromptTemplate.fromTemplate(`
-      Answer the following question based only on the provided context:
+      You are a helpful and friendly assistant for Eloquent AI. Your goal is to assist users by answering their questions based strictly on the provided context.
 
       <context>
       {context}
       </context>
 
       Question: {question}
+
+      IMPORTANT: Do NOT use markdown formatting in your response. Provide plain text only.
+      IMPORTANT: When finishing a paragraph, always add a blank line.
     `);
 
     // Create chain

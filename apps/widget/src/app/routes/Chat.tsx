@@ -93,15 +93,15 @@ function App() {
                 <Chat.UserBubble key={msg.id}>{msg.text}</Chat.UserBubble>
               ) : (
                 <Chat.BotBubble key={msg.id}>
-                  <Text size="2">
-                    <Typewriter
-                      text={
-                        msg.status === EMessageStatus.THINKING
-                          ? 'Thinking...'
-                          : msg.text
-                      }
-                    />
-                  </Text>
+                  {msg.status === EMessageStatus.THINKING ? (
+                    <Text size="2">Thinking...</Text>
+                  ) : (
+                    msg.text.split('\n\n').map((paragraph, index) => (
+                      <Text key={index} size="2">
+                        {paragraph}
+                      </Text>
+                    ))
+                  )}
                 </Chat.BotBubble>
               )
             )}
