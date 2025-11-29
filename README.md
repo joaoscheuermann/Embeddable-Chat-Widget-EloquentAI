@@ -8,6 +8,14 @@ To enable more efficient, secure, and rapid iteration, the widget is loaded with
 
 ![alt text](./assets/image.png)
 
+### Challenges
+
+The primary challenge involved encapsulating the widget SDK within a web component without style leakage or unintended impact on the host page.
+
+This required workarounds, such as loading styles inline within the component and subsequently appending them as `<style>` tags inside the Shadow DOM.
+
+Furthermore, integrating an iframe introduced complexity regarding bidirectional communication between the host page and the iframe.
+
 ### Components
 
 1.  **Chat Widget SDK (`packages/chat-widget-sdk`)**
