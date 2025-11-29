@@ -13,8 +13,9 @@ import {
   Text,
   TextField,
 } from '@radix-ui/themes';
-import { Inset } from '@radix-ui/themes/dist/cjs/index.js';
+
 import { useEffect, useRef, useState } from 'react';
+import { motion } from 'motion/react';
 
 export const Wrapper = ({ children }: React.PropsWithChildren) => {
   return (
@@ -111,13 +112,20 @@ export const Input = ({ onSendMessage, disabled }: IChatInputProps) => {
 export const UserBubble = ({ children }: React.PropsWithChildren) => {
   return (
     <Flex justify="end">
-      <Box
-        px="3"
-        py="2"
-        className="bg-[var(--accent-9)] text-white max-w-[80%] rounded-md rounded-br-sm"
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.2 }}
+        style={{ maxWidth: '80%' }}
       >
-        <Text size="2">{children}</Text>
-      </Box>
+        <Box
+          px="3"
+          py="2"
+          className="bg-[var(--accent-9)] text-white rounded-md rounded-br-sm"
+        >
+          <Text size="2">{children}</Text>
+        </Box>
+      </motion.div>
     </Flex>
   );
 };
@@ -131,19 +139,25 @@ export const BotBubble = ({ children }: React.PropsWithChildren) => {
         radius="full"
         variant="solid"
       />
-      <Box
-        px="3"
-        py="2"
-        className="
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.2 }}
+        style={{ maxWidth: '80%' }}
+      >
+        <Box
+          px="3"
+          py="2"
+          className="
             bg-[var(--gray-4)]
             text-[var(--gray-12)]
-            max-w-[80%]
             rounded-md
             rounded-bl-sm
-        "
-      >
-        <Text size="2">{children}</Text>
-      </Box>
+          "
+        >
+          {children}
+        </Box>
+      </motion.div>
     </Flex>
   );
 };
@@ -156,7 +170,6 @@ export const Messages = ({ children }: React.PropsWithChildren) => {
   };
 
   useEffect(() => {
-    // Scroll on initial load and when messages change
     scrollToBottom();
   }, [children]);
 
@@ -166,7 +179,7 @@ export const Messages = ({ children }: React.PropsWithChildren) => {
       scrollbars="vertical"
       className="flex-grow-1 h-full"
     >
-      <Flex direction="column" gap="3" p="4">
+      <Flex direction="column" gap="3" pl="4" pr="4">
         {children}
         <div ref={end} />
       </Flex>

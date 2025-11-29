@@ -171,7 +171,6 @@ app.post('/chat/:session/message', async (req, res) => {
 
   try {
     const { message } = req.body;
-    // Ignore session as requested
 
     // Retrieve relevant documents
     const retriever = vectorStore.asRetriever();
@@ -207,10 +206,10 @@ app.post('/chat/:session/message', async (req, res) => {
     });
 
     for await (const chunk of stream) {
-      res.write(`data: ${JSON.stringify({ content: chunk, finished: false })}\n\n`);
+      res.write(`${JSON.stringify({ content: chunk, finished: false })}\n\n`);
     }
 
-    res.write(`data: ${JSON.stringify({ content: null, finished: true })}\n\n`);
+    res.write(`${JSON.stringify({ content: null, finished: true })}\n\n`);
     res.end();
 
   } catch (error) {

@@ -1,43 +1,33 @@
-import { create } from 'zustand';
-import { ChatMessage, ChatResponse } from '@eloquentai/types';
+import { useEffect, useMemo } from 'react';
 
-interface ChatState {
-  messages: ChatMessage[];
-  addMessage: (message: ChatMessage) => void;
-  setMessages: (messages: ChatMessage[]) => void;
-}
-
-export const useChatStore = create<ChatState>((set) => ({
-  messages: [],
-  addMessage: (msg) => set((state) => ({ messages: [...state.messages, msg] })),
-  setMessages: (msgs) => set({ messages: msgs }),
-}));
+import { useChatStream } from '../queries/useChatStream';
+import { EMessageStatus, useChatStore } from '../stores/useChatStore';
 
 export function useChat() {
-  const { messages, addMessage } = useChatStore();
+  const { messages, addMessage, updateMessage, clearMessages } = useChatStore();
+
+  const lastUserMessage = useMemo(() => messages.findLast((m) => m.sender === 'user') ?? null, [messages]);
+  const lastBotMessage = useMemo(() => messages.findLast((m) => m.sender === 'bot') ?? null, [messages]);
+  const lastUserMessageText = useMemo(() => lastUserMessage?.text ?? null, [lastUserMessage]);
+
+  const { data, isFetching, isFetched } = useChatStream(lastUserMessageText);
+
+  useEffect(() => {
+    if (data && lastBotMessage && isFetching) {
+      updateMessage({ ...lastBotMessage, text: data.join(''), status: EMessageStatus.FETCHING });
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (isFetched && lastBotMessage) {
+      updateMessage({ ...lastBotMessage, status: EMessageStatus.COMPLETED });
+    }
+  }, [isFetched]);
 
   const sendMessage = async (content: string) => {
-    const userMsg: ChatMessage = {
-      id: Date.now().toString(),
-      role: 'user',
-      content,
-      timestamp: Date.now(),
-    };
-    addMessage(userMsg);
-
-    try {
-      const res = await fetch('http://localhost:3333/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: content }),
-      });
-      const data: ChatResponse = await res.json();
-      addMessage(data.message);
-    } catch (error) {
-      console.error('Failed to send message', error);
-      // Add error message handling if needed
-    }
+    addMessage({ id: crypto.randomUUID(), text: content, sender: 'user', status: EMessageStatus.COMPLETED });
+    addMessage({ id: crypto.randomUUID(), text: '', sender: 'bot', status: EMessageStatus.THINKING });
   };
 
-  return { messages, sendMessage };
+  return { messages, sendMessage, clearMessages };
 }

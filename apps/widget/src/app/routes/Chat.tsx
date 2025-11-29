@@ -12,14 +12,15 @@ import useCurrentServiceStatusQuery from '../queries/useCurentServiceStatusQuery
 
 import { ChatBubbleIcon, LightningBoltIcon } from '@radix-ui/react-icons';
 import { Introduction } from '../components/Introduction';
+import { useChat } from '../hooks/useChat';
+import { EMessageStatus } from '../stores/useChatStore';
+import Typewriter from '../components/Typewriter';
 
 function App() {
+  /**
+   * Config Initialization
+   */
   const [config, setConfig] = useState<IChatConfig | null>(null);
-  const [messages, setMessages] = useState<
-    Array<{ id: string; text: string; sender: 'user' | 'bot' }>
-  >([]);
-
-  const { data: serviceStatus } = useCurrentServiceStatusQuery();
 
   const handleMessage = useCallback((event: IWidgetMessage) => {
     switch (event.type) {
@@ -42,26 +43,19 @@ function App() {
     );
   }, []);
 
-  const handleSendMessage = (text: string) => {
-    const newMessage = {
-      id: Date.now().toString(),
-      text,
-      sender: 'user' as const,
-    };
-    setMessages((prev) => [...prev, newMessage]);
+  /**
+   * Message Handling
+   */
+  const chat = useChat();
 
-    // Simulate bot response for now
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: (Date.now() + 1).toString(),
-          text: "I'm a bot response!",
-          sender: 'bot',
-        },
-      ]);
-    }, 1000);
+  const handleSendMessage = (text: string) => {
+    chat.sendMessage(text);
   };
+
+  /**
+   * Service Status
+   */
+  const { data: serviceStatus } = useCurrentServiceStatusQuery();
 
   if (!config) return null;
 
@@ -94,20 +88,23 @@ function App() {
         <Chat.Content>
           <Chat.Messages>
             <Introduction />
-
-            <Chat.UserBubble>asdasd</Chat.UserBubble>
-            <Chat.BotBubble>asdasd</Chat.BotBubble>
-            <Chat.BotBubble>asdasd</Chat.BotBubble>
-            <Chat.BotBubble>asdasd</Chat.BotBubble>
-            <Chat.BotBubble>asdasd</Chat.BotBubble>
-            <Chat.BotBubble>asdasd</Chat.BotBubble>
-            <Chat.BotBubble>asdasd</Chat.BotBubble>
-            <Chat.BotBubble>asdasd</Chat.BotBubble>
-            <Chat.BotBubble>asdasd</Chat.BotBubble>
-            <Chat.BotBubble>asdasd</Chat.BotBubble>
-            <Chat.BotBubble>asdasd</Chat.BotBubble>
-            <Chat.BotBubble>asdasd</Chat.BotBubble>
-            <Chat.BotBubble>asdasd</Chat.BotBubble>
+            {chat.messages.map((msg) =>
+              msg.sender === 'user' ? (
+                <Chat.UserBubble key={msg.id}>{msg.text}</Chat.UserBubble>
+              ) : (
+                <Chat.BotBubble key={msg.id}>
+                  <Text size="2">
+                    <Typewriter
+                      text={
+                        msg.status === EMessageStatus.THINKING
+                          ? 'Thinking...'
+                          : msg.text
+                      }
+                    />
+                  </Text>
+                </Chat.BotBubble>
+              )
+            )}
           </Chat.Messages>
 
           {isMaintenance && (
@@ -117,6 +114,7 @@ function App() {
           )}
           <Chat.Input
             onSendMessage={handleSendMessage}
+            // disabled={isMaintenance || isFetching}
             disabled={isMaintenance}
           />
         </Chat.Content>
